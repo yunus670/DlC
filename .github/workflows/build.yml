@@ -10,18 +10,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Extract ZIP archive
+      - name: Extract ZIP archive & Patch
         run: |
           if [ ! -f build.gradle ]; then
-            ZIP_FILE=$(ls -t PurnaDLC*fixed*.zip 2>/dev/null | head -n 1)
-            if [ -z "$ZIP_FILE" ]; then
-              ZIP_FILE=$(ls -t *.zip 2>/dev/null | head -n 1)
-            fi
+            ZIP_FILE=$(ls -t PurnaDLC*final*.zip PurnaDLC*fixed*.zip *.zip 2>/dev/null | head -n 1)
             if [ -n "$ZIP_FILE" ]; then
               echo "Extracting $ZIP_FILE"
               unzip -o "$ZIP_FILE" -x ".github/*"
             fi
           fi
+          sed -i 's/AtomicMoveNotSupportedException | //g' src/main/java/com/purnadlc/config/PurnaProfileManager.java
 
       - uses: actions/setup-java@v4
         with:
